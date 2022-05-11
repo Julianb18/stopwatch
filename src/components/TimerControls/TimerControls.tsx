@@ -1,5 +1,3 @@
-import React, { useState } from "react";
-
 interface ITimerControlsProps {
   setTimeInMilliseconds: (arg: any) => void;
   handlePlayPause: () => void;
