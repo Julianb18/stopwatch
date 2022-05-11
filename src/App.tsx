@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Timer from "./components/Timer/Timer";
+
 import TimerControls from "./components/TimerControls/TimerControls";
 
 function App() {
@@ -11,8 +11,6 @@ function App() {
   const storedLaps = localStorage.getItem("laps")
     ? JSON.parse(localStorage.getItem("laps") || "")
     : [];
-
-  console.log(storedLaps);
 
   const milliToHMS = (timeInMilli: number): string => {
     const hrs = ("0" + Math.floor((timeInMilli / 3600000) % 24)).slice(-2);
@@ -49,7 +47,6 @@ function App() {
     setLaps([]);
   };
 
-  // console.log(JSON.parse(localStorage.getItem("laps")));
   useEffect(() => {
     let interval: any = null;
 
@@ -75,11 +72,11 @@ function App() {
   }, []);
 
   return (
-    <div className="h-screen w-full flex flex-col items-center ">
-      <div className="flex flex-col items-center border border-black">
-        <h1 className="text-6xl font-bold">Stopwatch</h1>
-
-        {milliToHMS(timeInMilliseconds)}
+    <div className="h-screen w-full flex flex-col items-center">
+      <div className="flex flex-col items-center mt-40 space-y-7">
+        <span className="text-6xl font-bold tabular-nums">
+          {milliToHMS(timeInMilliseconds)}
+        </span>
 
         <TimerControls
           setTimeInMilliseconds={setTimeInMilliseconds}
@@ -89,13 +86,44 @@ function App() {
           isActive={isActive}
           handleLap={handleLap}
         />
+
+        {/* Laps */}
+        <div className="flex flex-col items-center w-full space-y-2">
+          {!laps.length ? null : (
+            <button
+              className="flex self-end group space-x-1 cursor-pointer"
+              onClick={clearStoredLaps}
+            >
+              <span>Clear</span>
+              {/* TODO: implement svg with as component */}
+
+              <svg
+                className="w-6 h-6 text-gray-400 group-hover:text-red-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
+          )}
+
+          <ul className="w-full flex flex-col divide-y">
+            {storedLaps.length > 0
+              ? laps.map((lap: string, i: number) => (
+                  <li className="flex justify-between" key={lap}>
+                    <span>Lap {i + 1}</span>
+                    <span className="tabular-nums">{lap}</span>
+                  </li>
+                ))
+              : null}
+          </ul>
+        </div>
       </div>
-      <ul>
-        {storedLaps.length > 0
-          ? laps.map((lap: string) => <li key={lap}>{lap}</li>)
-          : null}
-      </ul>
-      <button onClick={clearStoredLaps}>Clear</button>
     </div>
   );
 }
